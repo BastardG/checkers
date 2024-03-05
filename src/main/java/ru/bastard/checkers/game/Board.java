@@ -101,54 +101,63 @@ public class Board extends JPanel {
     }
 
     public boolean isValidMove(Move move) {
-        if (!nobodyInCell(move))
+        if (!nobodyInCell(move)) {
             return false;
-        if (isMovingInWhiteCell(move))
+        }
+        if (isMovingInWhiteCell(move)) {
             return false;
-        if (sameTeam(move.getChecker(), move.getCapture()))
+        }
+        if (sameTeam(move.getChecker(), move.getCapture())) {
             return false;
-        if (moveMoreThanOneCellAndNotCapture(move))
+        }
+        if (moveMoreThanOneCellAndNotCapture(move)) {
             return false;
-        if (move.getCapture() != null && tryToCaptureMoreThenOne(move))
+        }
+        if (move.getCapture() != null && tryToCaptureMoreThenOne(move)) {
             return false;
+        }
         return moveBackwards(move);
     }
 
     private boolean tryToCaptureMoreThenOne(Move move) {
         if (move.getChecker() instanceof King) {
+            int counter = 0;
             switch (move.getDirection()) {
                 case UP_LEFT -> {
                     for (int c = move.getOldCol() - 1, r = move.getOldRow() - 1;
                          c > move.getCapture().getCol(); c--, r--) {
                         if (getChecker(c, r) != null) {
-                            return true;
+                            counter++;
                         }
                     }
+                    return counter > 1;
                 }
                 case UP_RIGHT -> {
                     for (int c = move.getOldCol() + 1, r = move.getOldRow() - 1;
                          c < move.getCapture().getCol(); c++, r--) {
                         if (getChecker(c, r) != null) {
-                            return true;
+                            counter++;
                         }
                     }
+                    return counter > 1;
                 }
                 case DOWN_LEFT -> {
                     for (int c = move.getOldCol() - 1, r = move.getOldRow() + 1;
                          c > move.getCapture().getCol(); c--, r++) {
                         if (getChecker(c, r) != null) {
-                            return true;
+                            counter++;
                         }
                     }
+                    return counter > 1;
                 }
                 case DOWN_RIGHT -> {
                     for (int c = move.getOldCol(), r = move.getOldRow();
                          c < move.getCapture().getCol(); c++, r++) {
-                        System.out.println(c + ":" + r);
                         if (getChecker(c, r) != null) {
-                            return true;
+                            counter++;
                         }
                     }
+                    return counter > 1;
                 }
             }
         }
@@ -189,8 +198,11 @@ public class Board extends JPanel {
     }
 
     private boolean moveBackwards(Move move) {
+        if (move.getChecker() instanceof King){
+            System.out.println("King true");
+            return true;
+        }
         if (move.getCapture() != null) return true;
-        if (move.getChecker() instanceof King) return true;
         switch (move.getChecker().getColor()) {
             case BLACK -> {
                 if (move.getOldRow() >= move.getNewRow()) return false;
